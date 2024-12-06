@@ -10,9 +10,9 @@ class Direction(Enum):
 
 
 class Visible(Enum):
-    OBSTACLE = "obstacle"
-    EMPTY = "empty"
-    EDGE = "edge"
+    OBSTACLE = "#"
+    EMPTY = "."
+    EDGE = "|"
 
 
 def part1(input_file):
@@ -125,7 +125,7 @@ def move_forward(grid, position, direction):
 
 
 def add_obstacle_to_grid(grid, position):
-    grid[position[1]][position[0]] = "#"
+    grid[position[1]][position[0]] = Visible.OBSTACLE.value
 
 
 def potential_loop_grids(grid):
