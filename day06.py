@@ -131,12 +131,10 @@ def add_obstacle_to_grid(grid, position):
 def potential_loop_grids(grid):
     possible_obstacales = set(find_guard_path(grid)[1:])
     guard_position = find_guard(grid)
-    grids = []
     for change_position in possible_obstacales:
         visible = get_from_grid(grid, change_position)
         if visible == Visible.OBSTACLE or change_position == guard_position:
             continue
         new_grid = deepcopy(grid)
         add_obstacle_to_grid(new_grid, change_position)
-        grids.append(new_grid)
-    return grids
+        yield new_grid
