@@ -12,6 +12,7 @@ class Direction(Enum):
 class Visible(Enum):
     OBSTACLE = "obstacle"
     EMPTY = "empty"
+    EDGE = "edge"
 
 
 def part1(input_file):
@@ -25,11 +26,11 @@ def find_guard_path(grid):
     guard_direction = Direction.UP
     guard_path = [guard_position]
     while within_grid(grid, guard_position):
+        guard_path.append(guard_position)
         if guard_sees_obstacle(grid, guard_position, guard_direction):
             guard_direction = turn_right(guard_direction)
         else:
             guard_position = move_forward(grid, guard_position, guard_direction)
-            guard_path.append(guard_position)
     return guard_path
 
 
@@ -70,7 +71,7 @@ def find_guard(grid):
 
 
 def within_grid(grid, position):
-    return len(grid[0]) - 1 > position[0] >= 0 and len(grid) - 1 > position[1] >= 0
+    return len(grid[0]) > position[0] >= 0 and len(grid) > position[1] >= 0
 
 
 def guard_sees_obstacle(grid, guard_position, guard_direction):
@@ -92,6 +93,8 @@ def get_next_position(grid, position, direction):
 
 
 def get_from_grid(grid, position):
+    if not within_grid(grid, position):
+        return Visible.EDGE
     value = grid[position[1]][position[0]]
     match value:
         case "." | "^":
