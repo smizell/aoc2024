@@ -10,8 +10,10 @@ def get_part_method(day, part):
 
 match sys.argv[1:]:
     case ["run", day, part]:
+        day = f"{int(day):02d}"
         input_file = f"inputs/day{day}.txt"
         print(get_part_method(day, part)(input_file))
     case ["example", day, part]:
+        day = f"{int(day):02d}"
         input_file = f"examples/day{day}_example.txt"
         print(get_part_method(day, part)(input_file))
