@@ -24,13 +24,12 @@ def part1(input_file):
 def find_guard_path(grid):
     guard_position = find_guard(grid)
     guard_direction = Direction.UP
-    guard_path = [guard_position]
+    guard_path = []
     while within_grid(grid, guard_position):
         guard_path.append(guard_position)
-        if guard_sees_obstacle(grid, guard_position, guard_direction):
-            guard_direction = turn_right(guard_direction)
-        else:
-            guard_position = move_forward(grid, guard_position, guard_direction)
+        guard_position, guard_direction = move_guard(
+            grid, guard_position, guard_direction
+        )
     return guard_path
 
 
@@ -51,11 +50,17 @@ def part2(input_file):
             if guard_visited[guard_position] > 4:
                 found_loop_grids.append(grid)
                 break
-            if guard_sees_obstacle(grid, guard_position, guard_direction):
-                guard_direction = turn_right(guard_direction)
-            else:
-                guard_position = move_forward(grid, guard_position, guard_direction)
+            guard_position, guard_direction = move_guard(
+                grid, guard_position, guard_direction
+            )
     return len(found_loop_grids)
+
+
+def move_guard(grid, guard_position, guard_direction):
+    if guard_sees_obstacle(grid, guard_position, guard_direction):
+        return guard_position, turn_right(guard_direction)
+    else:
+        return move_forward(grid, guard_position, guard_direction), guard_direction
 
 
 def load_grid(input_file):
