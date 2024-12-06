@@ -11,7 +11,6 @@ class Direction(Enum):
 
 class Visible(Enum):
     OBSTACLE = "obstacle"
-    EDGE = "edge"
     EMPTY = "empty"
 
 
