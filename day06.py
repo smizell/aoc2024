@@ -24,36 +24,33 @@ def part1(input_file):
 def find_guard_path(grid):
     guard_position = find_guard(grid)
     guard_direction = Direction.UP
-    guard_path = []
+    guard_path = set()
     while within_grid(grid, guard_position):
-        guard_path.append(guard_position)
+        guard_path.add(guard_position)
         guard_position, guard_direction = move_guard(
             grid, guard_position, guard_direction
         )
-    return guard_path
+    return list(guard_path)
 
 
 def part2(input_file):
     original_grid = load_grid(input_file)
     loop_grids = potential_loop_grids(original_grid)
-    found_loop_grids = []
+    found_loop_grids = 0
     for grid in loop_grids:
         guard_position = find_guard(grid)
         guard_direction = Direction.UP
-        guard_visited = {
-            (x, y): 0 for y in range(len(grid)) for x in range(len(grid[0]))
-        }
+        guard_visited = set()
         while within_grid(grid, guard_position):
-            guard_visited[guard_position] += 1
-            # There are 4 directions the guard can go, which means the guard
-            # could cross the same position 4 times and not bein a loop.
-            if guard_visited[guard_position] > 4:
-                found_loop_grids.append(grid)
+            guard_observed = (guard_position, guard_direction)
+            if guard_observed in guard_visited:
+                found_loop_grids += 1
                 break
+            guard_visited.add(guard_observed)
             guard_position, guard_direction = move_guard(
                 grid, guard_position, guard_direction
             )
-    return len(found_loop_grids)
+    return found_loop_grids
 
 
 def move_guard(grid, guard_position, guard_direction):
@@ -129,8 +126,9 @@ def add_obstacle_to_grid(grid, position):
 
 
 def potential_loop_grids(grid):
-    possible_obstacales = set(find_guard_path(grid)[1:])
+    possible_obstacales = set(find_guard_path(grid))
     guard_position = find_guard(grid)
+    possible_obstacales.remove(guard_position)
     for change_position in possible_obstacales:
         visible = get_from_grid(grid, change_position)
         if visible == Visible.OBSTACLE or change_position == guard_position:
