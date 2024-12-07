@@ -1,16 +1,28 @@
 import operator
 
+ops = {"add": operator.add, "mul": operator.mul, "concat": lambda a, b: int(f"{a}{b}")}
+
 
 def part1(input_file):
     equations = load_equations(input_file)
     true_equations = []
     for total, numbers in equations:
-        if solve(total, numbers):
+        if solve1(total, numbers):
             true_equations.append(total)
     return sum(true_equations)
 
 
-def solve(fin_total, numbers, cur_total=0):
+# 6042069247243 is too low
+def part2(input_file):
+    equations = load_equations(input_file)
+    true_equations = []
+    for total, numbers in equations:
+        if solve2(total, numbers):
+            true_equations.append(total)
+    return sum(true_equations)
+
+
+def solve1(fin_total, numbers, cur_total=0):
     if not numbers:
         return False
     number, *rest_numbers = numbers
@@ -19,8 +31,23 @@ def solve(fin_total, numbers, cur_total=0):
         new_total = op(cur_total, number)
         if not rest_numbers and new_total == fin_total:
             return True
-        if solve(fin_total, rest_numbers, new_total):
+        if solve1(fin_total, rest_numbers, new_total):
             return True
+    return False
+
+
+def solve2(fin_total, numbers, cur_total=0):
+    if not numbers:
+        return False
+    number, *rest_numbers = numbers
+    ops = [operator.add, operator.mul, lambda a, b: int(f"{a}{b}")]
+    for op in ops:
+        new_total = op(cur_total, number)
+        if not rest_numbers and new_total == fin_total:
+            return True
+        if solve2(fin_total, rest_numbers, new_total):
+            return True
+    return False
 
 
 def load_equations(input_file):
