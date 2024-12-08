@@ -25,7 +25,7 @@ def find_antinodes1(ant_map):
     # We go through each combination of coordinates for a given value
     # We then find the slope, find the possible antinodes, and decide
     # if those antinodes are on the map. If so, we capture it in set.
-    for value, coors in value_map.items():
+    for coors in value_map.values():
         for coor_a, coor_b in itertools.combinations(coors, 2):
             slope = find_slope(coor_a, coor_b)
             antinode_a = coor_a[0] - slope[0], coor_a[1] - slope[1]
