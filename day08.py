@@ -3,7 +3,12 @@ import itertools
 
 def part1(input_file):
     ant_map = load_map(input_file)
-    return len(find_antinodes(ant_map))
+    return len(find_antinodes1(ant_map))
+
+
+def part2(input_file):
+    ant_map = load_map(input_file)
+    return len(find_antinodes2(ant_map))
 
 
 def find_ants(ant_map):
@@ -14,20 +19,15 @@ def find_ants(ant_map):
             yield (x, y), value
 
 
-def find_antinodes(ant_map):
+def find_antinodes1(ant_map):
     all_antinodes = set()
-    # This maps all node values to every matching coordinate
-    value_map = {}
-    for coor, value in find_ants(ant_map):
-        if value not in value_map:
-            value_map[value] = []
-        value_map[value].append(coor)
+    value_map = create_value_map(ant_map)
     # We go through each combination of coordinates for a given value
     # We then find the slope, find the possible antinodes, and decide
     # if those antinodes are on the map. If so, we capture it in set.
     for value, coors in value_map.items():
         for coor_a, coor_b in itertools.combinations(coors, 2):
-            slope = coor_b[0] - coor_a[0], coor_b[1] - coor_a[1]
+            slope = find_slope(coor_a, coor_b)
             antinode_a = coor_a[0] - slope[0], coor_a[1] - slope[1]
             antinode_b = coor_b[0] + slope[0], coor_b[1] + slope[1]
             antinodes = [antinode_a, antinode_b]
@@ -35,6 +35,38 @@ def find_antinodes(ant_map):
                 if within_ant_map(ant_map, antinode):
                     all_antinodes.add(antinode)
     return list(all_antinodes)
+
+
+def find_antinodes2(ant_map):
+    all_antinodes = set()
+    value_map = create_value_map(ant_map)
+    for coors in value_map.values():
+        for coor_a, coor_b in itertools.combinations(coors, 2):
+            slope = find_slope(coor_a, coor_b)
+            # Follow coor_a in the negative
+            curr_coor_a = coor_a
+            while within_ant_map(ant_map, curr_coor_a):
+                all_antinodes.add(curr_coor_a)
+                curr_coor_a = curr_coor_a[0] - slope[0], curr_coor_a[1] - slope[1]
+            # Follow coor_a in the positive
+            curr_coor_b = coor_b
+            while within_ant_map(ant_map, curr_coor_b):
+                all_antinodes.add(curr_coor_b)
+                curr_coor_b = curr_coor_b[0] + slope[0], curr_coor_b[1] + slope[1]
+    return list(all_antinodes)
+
+
+def create_value_map(ant_map):
+    value_map = {}
+    for coor, value in find_ants(ant_map):
+        if value not in value_map:
+            value_map[value] = []
+        value_map[value].append(coor)
+    return value_map
+
+
+def find_slope(coor_a, coor_b):
+    return coor_b[0] - coor_a[0], coor_b[1] - coor_a[1]
 
 
 # Assumes the coor is within the map
