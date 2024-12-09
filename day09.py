@@ -6,9 +6,7 @@ def part1(input_file):
     disk_map = build_disk_map(raw_disk_map)
     representation = build_representation(disk_map)
     defragged = defrag1(representation)
-    checksum = sum(
-        [idx * int(value) for idx, value in enumerate(defragged) if value != "."]
-    )
+    checksum = calc_checksum(defragged)
     return checksum
 
 
@@ -17,14 +15,14 @@ def part2(input_file):
     disk_map = build_disk_map(raw_disk_map)
     defragged = defrag2(list(disk_map))
     representation = build_representation(defragged)
-    checksum = sum(
-        [
-            idx * int(value)
-            for idx, value in enumerate(representation)
-            if str(value) != "."
-        ]
-    )
+    checksum = calc_checksum(representation)
     return checksum
+
+
+def calc_checksum(disk_map):
+    return sum(
+        [idx * int(value) for idx, value in enumerate(disk_map) if str(value) != "."]
+    )
 
 
 def build_disk_map(raw_disk_map):
