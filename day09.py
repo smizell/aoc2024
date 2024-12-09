@@ -28,11 +28,11 @@ def part2(input_file):
 
 
 def build_disk_map(raw_disk_map):
-    curr_id = 0
+    curr_file_id = 0
     for idx, blocks in enumerate(raw_disk_map):
         if idx % 2 == 0:
-            yield File(curr_id, blocks)
-            curr_id += 1
+            yield File(curr_file_id, blocks)
+            curr_file_id += 1
         else:
             yield FreeSpace(blocks)
 
@@ -62,20 +62,19 @@ def defrag1(disk_map):
 
 def defrag2(disk_map):
     for file_idx, file_block in reverse_files(disk_map):
-        # print(disk_map_to_string(disk_map))
-        free_idx, free_block = find_first_free_space_by_size(
-            disk_map, file_block.size()
-        )
+        free_idx, free_block = find_first_free_space_by_size(disk_map, file_block.size)
+        # No available free space to move
         if not free_idx:
             continue
+        # Nothing available to the left
         if file_idx < free_idx:
             continue
+        # Swap the blocks
         disk_map[free_idx] = file_block
-        disk_map[file_idx] = FreeSpace(file_block.size())
-        if free_block.size() > file_block.size():
-            disk_map.insert(
-                free_idx + 1, FreeSpace(free_block.size() - file_block.size())
-            )
+        disk_map[file_idx] = FreeSpace(file_block.size)
+        # Add extra free space if needed
+        if free_block.size > file_block.size:
+            disk_map.insert(free_idx + 1, FreeSpace(free_block.size - file_block.size))
     return disk_map
 
 
@@ -91,7 +90,7 @@ def find_free_space(disk_map):
 
 def find_first_free_space_by_size(disk_map, size):
     for idx, free_block in find_free_space(disk_map):
-        if free_block.size() >= size:
+        if free_block.size >= size:
             return idx, free_block
     return None, None
 
@@ -102,7 +101,7 @@ def find_last_file(disk_map):
 
 def find_last_file_with_size(disk_map, size):
     for idx, file_block in reverse_files(disk_map):
-        if file_block.size() <= size:
+        if file_block.size <= size:
             return idx, file_block
 
 
@@ -110,10 +109,10 @@ def reallocate_free_blocks(disk_map):
     new_disk_map = []
     curr_free_blocks = []
     for block in disk_map:
-        if block is not FreeSpace:
+        if block is File:
             if curr_free_blocks:
                 combined_sizes = sum(
-                    [free_block.size() for free_block in curr_free_blocks]
+                    [free_block.size for free_block in curr_free_blocks]
                 )
                 new_disk_map.append(FreeSpace(combined_sizes))
                 curr_free_blocks = []
@@ -139,6 +138,7 @@ class File:
     def __str__(self):
         return str(self.id)
 
+    @property
     def size(self):
         return self.blocks
 
@@ -150,6 +150,7 @@ class FreeSpace:
     def __str__(self):
         return "."
 
+    @property
     def size(self):
         return self.blocks
 
