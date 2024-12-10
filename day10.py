@@ -1,16 +1,18 @@
 def part1(input_file):
     hiking_map = load_hiking_map(input_file)
-    trailheads = list(find_trailheads(hiking_map))
+    trailheads = find_trailheads(hiking_map)
     total_paths = [
-        len(find_total_paths(hiking_map, trailhead)) for trailhead in trailheads
+        len(set(find_total_paths(hiking_map, trailhead))) for trailhead in trailheads
     ]
     return sum(total_paths)
 
 
 def part2(input_file):
     hiking_map = load_hiking_map(input_file)
-    trailheads = list(find_trailheads(hiking_map))
-    total_paths = [find_total_paths2(hiking_map, trailhead) for trailhead in trailheads]
+    trailheads = find_trailheads(hiking_map)
+    total_paths = [
+        len(find_total_paths(hiking_map, trailhead)) for trailhead in trailheads
+    ]
     return sum(total_paths)
 
 
@@ -24,31 +26,14 @@ def find_trailheads(hiking_map):
 def find_total_paths(hiking_map, pos):
     height = get_from_map(hiking_map, pos)
     if height == 9:
-        return set([pos])
-    total_paths = set()
+        return [pos]
+    total_paths = []
     for step in next_steps(hiking_map, pos, height):
-        total_paths = total_paths | find_total_paths(hiking_map, step)
-    return total_paths
-
-
-def find_total_paths2(hiking_map, pos):
-    height = get_from_map(hiking_map, pos)
-    if height == 9:
-        return 1
-    total_paths = 0
-    for step in next_steps(hiking_map, pos, height):
-        total_paths += find_total_paths2(hiking_map, step)
+        total_paths += find_total_paths(hiking_map, step)
     return total_paths
 
 
 adjacent_diffs = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-
-
-def find_visible_steps(hiking_map, pos):
-    for diff in adjacent_diffs:
-        possible_pos = pos[0] + diff[0], pos[1] + diff[1]
-        if within_hiking_map(hiking_map, possible_pos):
-            yield possible_pos
 
 
 def next_steps(hiking_map, pos, height):
@@ -59,18 +44,11 @@ def next_steps(hiking_map, pos, height):
             yield step
 
 
-def walkable(hiking_map, visible_steps, height):
-    for step in visible_steps:
-        if get_from_map(hiking_map, step) == height + 1:
-            return True
-    return False
-
-
-def take_step(hiking_map, visible_steps, height):
-    for step in visible_steps:
-        if get_from_map(hiking_map, step) == height + 1:
-            return step, height + 1
-    raise "This is the end of the path"
+def find_visible_steps(hiking_map, pos):
+    for diff in adjacent_diffs:
+        possible_pos = pos[0] + diff[0], pos[1] + diff[1]
+        if within_hiking_map(hiking_map, possible_pos):
+            yield possible_pos
 
 
 def get_from_map(hiking_map, pos):
