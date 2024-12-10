@@ -7,6 +7,13 @@ def part1(input_file):
     return sum(total_paths)
 
 
+def part2(input_file):
+    hiking_map = load_hiking_map(input_file)
+    trailheads = list(find_trailheads(hiking_map))
+    total_paths = [find_total_paths2(hiking_map, trailhead) for trailhead in trailheads]
+    return sum(total_paths)
+
+
 def find_trailheads(hiking_map):
     for y, row in enumerate(hiking_map):
         for x, height in enumerate(row):
@@ -21,6 +28,16 @@ def find_total_paths(hiking_map, pos):
     total_paths = set()
     for step in next_steps(hiking_map, pos, height):
         total_paths = total_paths | find_total_paths(hiking_map, step)
+    return total_paths
+
+
+def find_total_paths2(hiking_map, pos):
+    height = get_from_map(hiking_map, pos)
+    if height == 9:
+        return 1
+    total_paths = 0
+    for step in next_steps(hiking_map, pos, height):
+        total_paths += find_total_paths2(hiking_map, step)
     return total_paths
 
 
