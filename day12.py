@@ -1,9 +1,21 @@
+from enum import Enum
+
+
 def part1(input_file):
     garden = load_garden(input_file)
     plots = find_plots(garden)
     areas = [len(plot) for plot in plots]
     perimeters = [calc_perimeter(garden, plot) for plot in plots]
     prices = [area * perimeter for area, perimeter in zip(areas, perimeters)]
+    return sum(prices)
+
+
+def part2(input_file):
+    garden = load_garden(input_file)
+    plots = find_plots(garden)
+    areas = [len(plot) for plot in plots]
+    plot_sides = map(calc_sides, plots)
+    prices = [area * sides for area, sides in zip(areas, plot_sides)]
     return sum(prices)
 
 
@@ -41,6 +53,49 @@ def calc_perimeter(garden, plot):
         fences_needed = 4 - len(adj_plants)
         total += fences_needed
     return total
+
+
+def calc_sides(plot):
+    sides = 0
+    for coor in plot:
+        # Use patterns to find the corners for the plot
+        surr = get_surrounding_coors(coor)
+        if surr["n"] not in plot and surr["w"] not in plot:
+            sides += 1
+        if surr["n"] not in plot and surr["e"] not in plot:
+            sides += 1
+        if surr["w"] not in plot and surr["s"] not in plot:
+            sides += 1
+        if surr["e"] not in plot and surr["s"] not in plot:
+            sides += 1
+        if surr["s"] in plot and surr["se"] in plot and surr["e"] not in plot:
+            sides += 1
+        if surr["e"] in plot and surr["se"] in plot and surr["s"] not in plot:
+            sides += 1
+        if surr["e"] in plot and surr["ne"] in plot and surr["n"] not in plot:
+            sides += 1
+        if surr["n"] in plot and surr["ne"] in plot and surr["e"] not in plot:
+            sides += 1
+    return sides
+
+
+surrounding_diffs = {
+    "n": (0, -1),
+    "ne": (1, -1),
+    "e": (1, 0),
+    "se": (1, 1),
+    "s": (0, 1),
+    "sw": (-1, 1),
+    "w": (-1, 0),
+    "nw": (-1, -1),
+}
+
+
+def get_surrounding_coors(coor):
+    return {
+        direction: (coor[0] + diff[0], coor[1] + diff[1])
+        for direction, diff in surrounding_diffs.items()
+    }
 
 
 adj_diffs = [(1, 0), (0, 1), (-1, 0), (0, -1)]
