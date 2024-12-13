@@ -1,6 +1,3 @@
-from enum import Enum
-
-
 def part1(input_file):
     garden = load_garden(input_file)
     plots = find_plots(garden)
