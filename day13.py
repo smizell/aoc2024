@@ -2,6 +2,7 @@ import re
 
 a_cost = 3
 b_cost = 1
+correction = 10000000000000
 
 
 def part1(input_file):
@@ -12,10 +13,20 @@ def part1(input_file):
     return sum(cheapest)
 
 
-# def calc_cheapest(machine):
-#     combos = find_combos(machine)
+def part2(input_file):
+    machines = load_machines(input_file)
+    machines = correct_machines(machines)
+    all_combos = [find_combos2(machine) for machine in machines]
+    winners = find_winners(all_combos)
+    cheapest = [find_cheapest(winner) for winner in winners]
+    return sum(cheapest)
 
-#     return combos
+
+def correct_machines(machines):
+    return [
+        (a_move, b_move, (correction + prize[0], correction + prize[1]))
+        for a_move, b_move, prize in machines
+    ]
 
 
 def find_cheapest(winner):
@@ -44,6 +55,18 @@ def find_combos(machine):
                     yield (a_times, b_times)
 
 
+def find_combos2(machine):
+    a_move, b_move, prize = machine
+    # Had to watch https://www.youtube.com/watch?v=-5J-DAsWuJc
+    ax, ay = a_move
+    bx, by = b_move
+    px, py = prize
+    a_times = (px * by - py * bx) / (ax * by - ay * bx)
+    b_times = (px - ax * a_times) / bx
+    if a_times % 1 == b_times % 1 == 0:
+        yield int(a_times), int(b_times)
+
+
 def load_machines(input_file):
     machines = []
     with open(input_file) as f:
@@ -57,10 +80,7 @@ def load_machines(input_file):
     return machines
 
 
-# Button A: X+94, Y+34
 button_re = r"Button ([A-Z]): X(\+)(\d{1,2}), Y(\+)(\d{1,2})"
-
-# Prize: X=8400, Y=5400
 prize_re = r"Prize: X=(\d+), Y=(\d+)"
 
 
