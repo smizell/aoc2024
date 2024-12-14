@@ -15,6 +15,37 @@ def part1(input_file):
     return reduce(mul, map(len, grouped_robots))
 
 
+def part2(input_file):
+    robots = load_robots(input_file)
+    space = get_space(input_file)
+    seconds = find_tree(list(robots), space)
+    return seconds
+
+
+def find_tree(robots, space):
+    while True:
+        robots = tick_robots(robots, space)
+        print(render_robots(robots, space))
+        input()
+
+
+def tick_robots(robots, space):
+    return move_robots(robots, space, 1)
+
+
+def render_robots(robots, space):
+    robot_poss = set([pos for pos, _ in robots])
+    txt = ""
+    for y in range(space.y):
+        for x in range(space.x):
+            if Coor(x, y) in robot_poss:
+                txt += "X"
+            else:
+                txt += " "
+        txt += "\n"
+    return txt
+
+
 def move_robots(robots, space, seconds):
     new_robots = []
     for robot in robots:
@@ -22,7 +53,7 @@ def move_robots(robots, space, seconds):
         diff = Coor(vel.x * seconds, vel.y * seconds)
         new_pos = Coor(pos.x + diff.x, pos.y + diff.y)
         collected = Coor(new_pos.x % (space.x + 1), new_pos.y % (space.y + 1))
-        new_robots.append(collected)
+        new_robots.append((collected, vel))
     return new_robots
 
 
@@ -31,9 +62,9 @@ def group_in_quadrants(robots, space):
     quadrants = get_quadrants(space)
     for start, end in quadrants:
         robots_in_quadrants = []
-        for robot in robots:
-            if end.x >= robot.x >= start.x and end.y >= robot.y >= start.y:
-                robots_in_quadrants.append(robot)
+        for pos, _ in robots:
+            if end.x >= pos.x >= start.x and end.y >= pos.y >= start.y:
+                robots_in_quadrants.append(pos)
         grouped_robots.append(robots_in_quadrants)
     return [group for group in grouped_robots if len(group) > 0]
 
