@@ -16,16 +16,17 @@ def part1(input_file):
 
 
 def move_robots(robots, space, seconds):
+    new_robots = []
     for robot in robots:
         pos, vel = robot
         diff = Coor(vel.x * seconds, vel.y * seconds)
         new_pos = Coor(pos.x + diff.x, pos.y + diff.y)
         collected = Coor(new_pos.x % (space.x + 1), new_pos.y % (space.y + 1))
-        yield collected
+        new_robots.append(collected)
+    return new_robots
 
 
 def group_in_quadrants(robots, space):
-    robots = list(robots)
     grouped_robots = []
     quadrants = get_quadrants(space)
     for start, end in quadrants:
