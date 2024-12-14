@@ -18,15 +18,40 @@ def part1(input_file):
 def part2(input_file):
     robots = load_robots(input_file)
     space = get_space(input_file)
-    seconds = find_tree(robots, space)
+    seconds = find_tree_random(robots, space)
     return seconds
 
 
-def find_tree(robots, space):
+# I noticed a pattern so I just replicated it until I saw a tree :)
+def find_tree_random(robots, space):
+    # First seconds I saw the pattern
+    seconds = 23
+    # Let's move there
+    robots = move_robots(robots, space, seconds)
+    # Start differences I saw
+    a, b = 25, 78
+    curr = "a"
     while True:
-        robots = tick_robots(robots, space)
+        if curr == "a":
+            next_second = seconds + a
+            # a always changed by -2
+            a -= 2
+            curr = "b"
+        else:
+            next_second = seconds + b
+            # b always changed by +2
+            b += 2
+            curr = "a"
+        diff_seconds = next_second - seconds
+        seconds = next_second
+        robots = move_robots(robots, space, diff_seconds)
+        print(seconds)
         print(render_robots(robots, space))
         input()
+
+
+def find_robot_poss(robots):
+    return [pos for pos, _ in robots]
 
 
 def tick_robots(robots, space):
@@ -34,7 +59,7 @@ def tick_robots(robots, space):
 
 
 def render_robots(robots, space):
-    robot_poss = set([pos for pos, _ in robots])
+    robot_poss = set(find_robot_poss(robots))
     txt = ""
     for y in range(space.y):
         for x in range(space.x):
@@ -62,7 +87,7 @@ def group_in_quadrants(robots, space):
     quadrants = get_quadrants(space)
     for start, end in quadrants:
         robots_in_quadrants = []
-        for pos, _ in robots:
+        for pos in find_robot_poss(robots):
             if end.x >= pos.x >= start.x and end.y >= pos.y >= start.y:
                 robots_in_quadrants.append(pos)
         grouped_robots.append(robots_in_quadrants)
