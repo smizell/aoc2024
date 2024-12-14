@@ -11,8 +11,7 @@ def part1(input_file):
     space = get_space(input_file)
     seconds = 100
     robots = move_robots(robots, space, seconds)
-    grouped_robots = group_in_quadrants(robots, space)
-    return reduce(mul, map(len, grouped_robots))
+    return calc_safety_factor(robots, space)
 
 
 def part2(input_file):
@@ -20,6 +19,17 @@ def part2(input_file):
     space = get_space(input_file)
     seconds = find_tree_random(robots, space)
     return seconds
+
+
+# This is a way to see how the numbers group
+# I suppose if they are grouped along the middle horizontal
+# and middle vertical then they reduce the safety factor.
+# After that, the next min safety factor will be 103 for x
+# and 101 for y coordinates.
+def print_safety_factors(robots, space, total):
+    for s in range(1, total + 1):
+        robots = move_robots(robots, space, 1)
+        print(s, calc_safety_factor(robots, space))
 
 
 # I noticed a pattern so I just replicated it until I saw a tree :)
@@ -57,6 +67,11 @@ def render_robots(robots, space):
                 txt += " "
         txt += "\n"
     return txt
+
+
+def calc_safety_factor(robots, space):
+    grouped_robots = group_in_quadrants(robots, space)
+    return reduce(mul, map(len, grouped_robots))
 
 
 def move_robots(robots, space, seconds):
