@@ -25,26 +25,14 @@ def part2(input_file):
 # I noticed a pattern so I just replicated it until I saw a tree :)
 def find_tree_random(robots, space):
     # First seconds I saw the pattern
-    seconds = 23
+    seconds = 48
     # Let's move there
     robots = move_robots(robots, space, seconds)
-    # Start differences I saw
-    a, b = 25, 78
-    curr = "a"
+    diff = space.x + 1
     while True:
-        if curr == "a":
-            next_second = seconds + a
-            # a always changed by -2
-            a -= 2
-            curr = "b"
-        else:
-            next_second = seconds + b
-            # b always changed by +2
-            b += 2
-            curr = "a"
-        diff_seconds = next_second - seconds
+        next_second = seconds + diff
         seconds = next_second
-        robots = move_robots(robots, space, diff_seconds)
+        robots = move_robots(robots, space, diff)
         print(seconds)
         print(render_robots(robots, space))
         input()
