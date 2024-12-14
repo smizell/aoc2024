@@ -18,7 +18,7 @@ def part1(input_file):
 def part2(input_file):
     robots = load_robots(input_file)
     space = get_space(input_file)
-    seconds = find_tree(list(robots), space)
+    seconds = find_tree(robots, space)
     return seconds
 
 
@@ -87,11 +87,13 @@ robot_re = r"p=(-?\d*),(-?\d*) v=(-?\d*),(-?\d*)"
 
 
 def load_robots(input_file):
+    robots = []
     with open(input_file) as f:
         raw_robots = f.read().split("\n")
         for raw_robot in raw_robots:
             px, py, vx, vy = list(map(int, re.findall(robot_re, raw_robot)[0]))
-            yield Coor(px, py), Coor(vx, vy)
+            robots.append((Coor(px, py), Coor(vx, vy)))
+    return robots
 
 
 def get_space(input_file):
