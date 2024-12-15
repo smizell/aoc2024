@@ -12,48 +12,48 @@ diffs = {">": (1, 0), "<": (-1, 0), "^": (0, -1), "v": (0, 1)}
 
 
 def part1(input_file):
-    warehouse, moves = load_data(input_file)
-    warehouse = operate_robot(warehouse, moves)
-    display_warehouse(warehouse)
-    sum_of_coors = calc_sum_of_coors(warehouse)
+    warehouse, moves = load_data1(input_file)
+    warehouse = operate_robot1(warehouse, moves)
+    display_warehouse1(warehouse)
+    sum_of_coors = calc_sum_of_coors1(warehouse)
     return sum_of_coors
 
 
-def operate_robot(warehouse, moves):
+def operate_robot1(warehouse, moves):
     for move in moves:
-        first_empty = find_first_empty(warehouse, move)
+        first_empty = find_first_empty1(warehouse, move)
         if not first_empty:
             continue
-        warehouse.robot = move_item(warehouse.robot, move)
+        warehouse.robot = move_item1(warehouse.robot, move)
         if warehouse.robot in warehouse.boxes:
             warehouse.boxes.remove(warehouse.robot)
             warehouse.boxes.add(first_empty)
     return warehouse
 
 
-def move_item(item, move):
+def move_item1(item, move):
     diff = diffs[move]
     return item[0] + diff[0], item[1] + diff[1]
 
 
-def find_first_empty(warehouse, move):
+def find_first_empty1(warehouse, move):
     curr_loc = warehouse.robot
     while True:
-        curr_loc = move_item(curr_loc, move)
+        curr_loc = move_item1(curr_loc, move)
         if curr_loc in warehouse.walls:
             return None
         if curr_loc not in warehouse.boxes:
             return curr_loc
 
 
-def calc_sum_of_coors(warehouse):
+def calc_sum_of_coors1(warehouse):
     total = 0
     for box in warehouse.boxes:
         total += (box[1] * 100) + box[0]
     return total
 
 
-def display_warehouse(warehouse):
+def display_warehouse1(warehouse):
     txt = ""
     warehouse
     width, height = (
@@ -74,15 +74,15 @@ def display_warehouse(warehouse):
     print(txt)
 
 
-def load_data(input_file):
+def load_data1(input_file):
     with open(input_file) as f:
         raw_warehouse, raw_moves = f.read().split("\n\n")
-    warehouse = parse_warehouse(raw_warehouse)
+    warehouse = parse_warehouse1(raw_warehouse)
     moves = list(raw_moves.replace("\n", ""))
     return warehouse, moves
 
 
-def parse_warehouse(raw_warehouse):
+def parse_warehouse1(raw_warehouse):
     warehouse = Warehouse(set(), set(), ())
     for y, row in enumerate(raw_warehouse.split("\n")):
         for x, value in enumerate(list(row)):
