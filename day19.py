@@ -14,8 +14,8 @@ def part1(input_file):
                 return True
         return False
 
-    impossible = [design for design in designs if design_is_possible(design)]
-    return len(impossible)
+    possible = [design for design in designs if design_is_possible(design)]
+    return len(possible)
 
 
 def load_data(input_file):
