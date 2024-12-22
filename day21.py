@@ -1,10 +1,10 @@
 from functools import cache
 
 numeric_keypad = [
-    [7, 8, 9],
-    [4, 5, 6],
-    [1, 2, 3],
-    [None, 0, "A"],
+    ["7", "8", "9"],
+    ["4", "5", "6"],
+    ["1", "2", "3"],
+    [None, "0", "A"],
 ]
 
 numeric_keypad_start = (2, 3)
@@ -53,7 +53,6 @@ def get_numeric_commands(values):
     commands = ""
     for value in values:
         curr_value = get_from_keypad(numeric_keypad, curr_pos)
-        value = get_numeric_value(value)
         value_pos = get_numeric_pos(value)
         diff = get_diff(value_pos, curr_pos)
         commands += commands_from_diff(diff, curr_value)
@@ -78,12 +77,6 @@ def get_dir_commands(values):
 
 def get_diff(pos1, pos2):
     return pos1[0] - pos2[0], pos1[1] - pos2[1]
-
-
-def get_numeric_value(value):
-    if value != "A":
-        return int(value)
-    return value
 
 
 def commands_from_diff(diff, value):
