@@ -1,13 +1,6 @@
 def part1(input_file):
     connections = load_connections(input_file)
-    graph = {}
-    for a, b in connections:
-        if a not in graph:
-            graph[a] = set()
-        if b not in graph:
-            graph[b] = set()
-        graph[a].add(b)
-        graph[b].add(a)
+    graph = build_graph(connections)
     sets_of_three = []
     for a, bs in graph.items():
         for b in bs:
@@ -18,6 +11,18 @@ def part1(input_file):
                         sets_of_three.append(value)
     sets_with_t = [s for s in sets_of_three if any(c.startswith("t") for c in s)]
     return len(sets_with_t)
+
+
+def build_graph(connections):
+    graph = {}
+    for a, b in connections:
+        if a not in graph:
+            graph[a] = set()
+        if b not in graph:
+            graph[b] = set()
+        graph[a].add(b)
+        graph[b].add(a)
+    return graph
 
 
 def load_connections(input_file):
