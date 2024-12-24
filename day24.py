@@ -51,7 +51,6 @@ def load_data(input_file):
     parsed_connections = [
         raw_connection.split(" ") for raw_connection in raw_connections.split("\n")
     ]
-    connections = [(c[0], c[1], c[2], c[4]) for c in parsed_connections]
     for c in parsed_connections:
         wires[c[4]] = (c[1], c[0], c[2])
     return wires
