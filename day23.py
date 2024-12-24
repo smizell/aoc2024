@@ -13,6 +13,30 @@ def part1(input_file):
     return len(sets_with_t)
 
 
+def part2(input_file):
+    connections = load_connections(input_file)
+    graph = build_graph(connections)
+
+    sets = set()
+
+    def search(comp, connections):
+        key = tuple(sorted(connections))
+        if key in sets:
+            return
+        sets.add(key)
+        for neighbor in graph[comp]:
+            if neighbor in connections:
+                continue
+            if not all(neighbor in graph[query] for query in connections):
+                continue
+            search(neighbor, {*connections, neighbor})
+
+    for comp in graph:
+        search(comp, {comp})
+
+    return ",".join(max(sets, key=len))
+
+
 def build_graph(connections):
     graph = {}
     for a, b in connections:
